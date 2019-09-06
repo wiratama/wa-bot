@@ -1,0 +1,17 @@
+{
+    "verbose": true,
+    "ignore": ["public/assets"],
+    "events": {
+        "restart": "osascript -e 'display notification \"App restarted due to:\n'$FILENAME'\" with title \"nodemon\"'"
+    },
+    "watch": [
+        "config/",
+        "resources/",
+        "./app.js",
+        "./server.js"
+    ],
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "ext": "js pug hbs scss"
+}

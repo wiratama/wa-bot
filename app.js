@@ -12,6 +12,7 @@ import hbs from 'express-handlebars';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
+import axios from 'axios';
 import config from './config';
 
 const whatsAppBot = express();
@@ -94,24 +95,26 @@ whatsAppBot.use(function(err, req, res, next) {
 
 // bot section
 import TelegramBot from 'node-telegram-bot-api';
-const token = '795756780:AAGhviOnmfklTMxUGlJlo7WJZiomHK0vcP8';
+const token = '950684372:AAFBwpGkZzXzKpkDwa3RxIaZE_u8zvdcinw';
 const bot = new TelegramBot(token, {polling: true});
-const enyekList = [
-  'bgst!',
-  'naskleng!',
-  'kampret!',
-  'taek!',
-  'kamfang!',
-  'babi koe!'
-];
-let _renderEnyek;
 
-_renderEnyek = enyekList[Math.floor(Math.random()*enyekList.length)];
-bot.onText(/\/ngenyek (.+)/, (msg, match) => {
-  let resp = match[1];
-  
-  if(resp=='cuk')
-    bot.sendMessage(msg.chat.id, _renderEnyek);
+const kataTelegramHook = config[currentEnv].telegram_endpoint+config[currentEnv].telegram_token+'/setWebhook?url='+config[currentEnv].kata_endpoint;
+
+bot.on('message', (msg) => {
+  const chatId = msg.chat.id;
+
+  axios.post(kataTelegramHook+'/sendMessage', {
+    'chat_id': msg.chat.id,
+    'text': msg.text
+  })
+  .then(function (response) {
+    console.log(response.data);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+
+  bot.sendMessage(chatId, 'Received your message');
 });
 
 export default whatsAppBot;
